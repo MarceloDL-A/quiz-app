@@ -1,0 +1,10 @@
+{
+  "dependencies": {
+    "@capacitor/android": "^6.1.2",
+    "@capacitor/cli": "^6.1.2",
+    "@capacitor/core": "^6.1.2"
+  },
+  "scripts": {
+    "build": "xcopy /E /I /Y www dist"
+  }
+}
