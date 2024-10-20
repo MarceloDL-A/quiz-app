@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz com Temas Disponíveis em JSON</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        #quiz-container { max-width: 700px; margin: auto; padding: 20px; background-color: #f9f9f9; border-radius: 8px; box-shadow: 0px 0px 15px rgba(0,0,0,0.1); }
+        h1 { text-align: center; font-size: 1.8em; color: #007bff; }
+        #question { font-size: 1.2em; margin-bottom: 20px; text-align: left; }
+        button { display: block; margin: 10px 0; padding: 10px 15px; font-size: 1em; border: none; border-radius: 5px; cursor: pointer; width: 100%; transition: background-color 0.3s; text-align: left; }
+        .btn-answer { background-color: #f0f0f0; color: #333; }
+        .btn-answer:hover { background-color: #e0e0e0; }
+        .btn-correct { background-color: #28a745 !important; color: white; }
+        .btn-incorrect { background-color: #dc3545 !important; color: white; }
+        #next-button { background-color: #007bff; color: white; margin-top: 20px; padding: 12px; width: 100%; border-radius: 5px; cursor: pointer; display: none; }
+        #feedback { margin-top: 20px; font-size: 1.1em; font-weight: bold; }
+        #feedback.correct { color: #28a745; }
+        #feedback.incorrect { color: #dc3545; }
+        .progress-bar { height: 20px; width: 100%; background-color: #e9ecef; border-radius: 5px; overflow: hidden; margin: 20px 0; }
+        .progress-fill { height: 100%; background-color: #007bff; width: 0; transition: width 0.5s; }
+        #score-summary { margin-top: 30px; font-size: 1.1em; }
+        .stats-summary { padding: 10px 0; }
+        #upload-section { margin-top: 30px; background-color: #f8f9fa; padding: 15px; border-radius: 8px; }
+        #upload-section input, #upload-section textarea { margin-top: 10px; padding: 10px; width: 100%; }
+        #upload-section h2 { font-size: 1.3em; color: #007bff; }
+        .quiz-summary-title { font-size: 1.4em; margin-top: 40px; color: #343a40; font-weight: bold; }
+        .instructions { font-size: 0.9em; color: #666; margin-top: 10px; }
+        .formatted-code { background-color: #f4f4f4; border-left: 4px solid #007bff; padding: 10px; font-family: 'Courier New', Courier, monospace; white-space: pre-wrap; }
+        #copy-prompt { background-color: #007bff; color: white; border: none; padding: 10px; cursor: pointer; margin-top: 10px; font-size: 1em; border-radius: 5px; }
+        #apply-button { background-color: #28a745; color: white; }
+        #apply-button:hover { background-color: #218838; }
+        #json-upload-section { display: block; margin-top: 20px; }
+        
+        /* Estilos para o calendário */
+        #study-calendar { margin-top: 50px; }
+        .calendar-day { display: inline-block; width: 20px; height: 20px; margin: 2px; background-color: #e0e0e0; border-radius: 3px; }
+        .calendar-day[data-studies="1"] { background-color: #d6e685; }
+        .calendar-day[data-studies="2"] { background-color: #8cc665; }
+        .calendar-day[data-studies="3"] { background-color: #44a340; }
+        .calendar-day[data-studies="4"] { background-color: #1e6823; }
+    </style>
+</head>
+<body>
+    <div id="quiz-container">
+        <h1 id="quiz-title">Quiz com Temas JSON</h1>
+        <div id="question"></div>
+        <div id="buttons"></div>
+        <div id="feedback"></div>
+        <div class="progress-bar">
+            <div class="progress-fill" id="progress-fill"></div>
+        </div>
+        <button id="next-button" onclick="nextQuestion()">Próxima Questão</button>
+        
+        <div id="score-summary">
+            <h2 class="quiz-summary-title">Resumo do Quiz</h2>
+            <div id="stats-by-category"></div>
+            <div id="summary"></div>
+        </div>
+
+        <p id="total-questions-display">Número total de questões: <strong id="total-questions-count">0</strong></p>
+
+        <div id="upload-section">
+            <h2>Alterar Tema do Quiz</h2>
+            <p class="instructions">Selecione ou insira um novo tema abaixo. O quiz carregará questões de um arquivo JSON nomeado no formato <strong>questions_[tema].json</strong>. Por exemplo, se o tema for 'Google', o arquivo deve ser nomeado <strong>questions_Google.json</strong>.</p>
+            <input type="text" id="theme-input" placeholder="Digite ou escolha um tema" onfocus="populateThemes()" list="theme-select" onchange="applyNewTheme()">
+            <datalist id="theme-select"></datalist>
+            <p id="filename-suggestion">Nome do arquivo atual: <strong>questions_Databricks_Certified_Data_Analyst_Associate_Exam.json</strong></p>
+            <button id="apply-button" onclick="applyNewTheme()">Aplicar Novo Tema</button>
+
+            <div id="json-upload-section">
+                <h2>Fazer Upload ou Adicionar Novas Questões</h2>
+                <textarea id="json-content" rows="10" placeholder="Cole novas questões aqui em JSON"></textarea>
+                <button onclick="addQuestions()">Adicionar Questões</button>
+            </div>
+
+            <button onclick="downloadUpdatedFile()">Baixar Arquivo Atualizado</button>
+
+            <h2>Gerar Mais Questões com o GPT</h2>
+            <p class="instructions">Use o seguinte prompt para gerar novas questões no formato correto:</p>
+            <div class="formatted-code" id="gpt-prompt"></div>
+            <button id="copy-prompt" onclick="copyPrompt()">Copiar Prompt GPT</button>
+
+            <input type="file" id="file-upload" accept=".json" onchange="uploadQuestions()">
+        </div>
+
+        <!-- Calendário de Estudos -->
+        <div id="study-calendar">
+            <h2>Seu Calendário de Estudos</h2>
+            <div id="calendar-grid"></div>
+        </div>
+
+    </div>
+
+    <script>
+        let questions = [];  // Array para armazenar as questões.
+        let currentQuestionIndex = 0;
+        let correctAnswers = 0;
+        let totalQuestions = 0;
+        let categories = {};
+        let totalAnswered = 0;
+        let currentTheme = 'Databricks_Certified_Data_Analyst_Associate_Exam';
+        let studyData = {};  // Armazenar dados de estudo por dia
+
+        // Função para embaralhar questões usando o algoritmo de Fisher-Yates
+        function shuffleQuestions(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
+        // Função para gerar o calendário de estudos ao estilo GitHub
+        function generateStudyCalendar() {
+            const calendarGrid = document.getElementById('calendar-grid');
+            calendarGrid.innerHTML = ''; // Limpa o calendário
+            const today = new Date();
+            const daysInYear = 365;
+            
+            for (let i = 0; i < daysInYear; i++) {
+                const day = new Date(today);
+                day.setDate(today.getDate() - i);
+                const formattedDate = day.toISOString().split('T')[0];
+                const studies = studyData[formattedDate] || 0;
+
+                const dayElement = document.createElement('div');
+                dayElement.classList.add('calendar-day');
+                dayElement.title = `${formattedDate}: ${studies} estudos`;
+                dayElement.dataset.studies = Math.min(studies, 4);  // No máximo 4
+
+                calendarGrid.appendChild(dayElement);
+            }
+        }
+
+        // Função para registrar os estudos no calendário
+        function logStudy() {
+            const today = new Date().toISOString().split('T')[0];
+            if (!studyData[today]) {
+                studyData[today] = 0;
+            }
+            studyData[today]++; // Incrementa o número de estudos do dia
+            generateStudyCalendar();
+        }
+
+        // Sanitização para garantir questões únicas
+        function sanitizeQuestions(newQuestions) {
+            const existingQuestionsSet = new Set(questions.map(q => q.question));
+            newQuestions.forEach(newQ => {
+                if (!existingQuestionsSet.has(newQ.question)) {
+                    questions.push(newQ);
+                    existingQuestionsSet.add(newQ.question); // Adiciona para garantir que não haverá duplicatas
+                }
+            });
+        }
+
+        function sanitizeFilename(filename) {
+            return filename.replace(/[^\w\s]/gi, '').replace(/\s+/g, '_') + '.json';
+        }
+
+        function loadQuestionsFromFile(theme) {
+            const sanitizedFilename = sanitizeFilename(`questions_${theme}`);
+            fetch(sanitizedFilename)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error("Arquivo não encontrado");
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    questions = shuffleQuestions(data);  // Embaralha as questões ao carregá-las
+                    totalQuestions = questions.length;
+                    document.getElementById('total-questions-count').innerText = totalQuestions;
+                    currentQuestionIndex = 0;
+                    correctAnswers = 0;
+                    categories = {};
+                    totalAnswered = 0;
+                    updateProgress();
+                    document.getElementById('feedback').innerText = '';
+                    document.getElementById('next-button').style.display = 'none';
+                    document.getElementById('stats-by-category').innerHTML = '';
+                    loadQuestion();
+                    logStudy();  // Atualiza o calendário de estudos
+                })
+                .catch(error => {
+                    alert(`Erro ao carregar questões para o tema "${theme}".`);
+                    console.error("Erro ao carregar questões:", error);
+                });
+        }
+
+        function applyNewTheme() {
+            const newThemeInput = document.getElementById('theme-input').value.trim();
+            if (newThemeInput) {
+                currentTheme = newThemeInput;
+                updateQuizTitle(currentTheme);
+                loadQuestionsFromFile(currentTheme);
+                const sanitizedFilename = sanitizeFilename(`questions_${currentTheme}`);
+                document.getElementById('filename-suggestion').innerHTML = `Nome do arquivo atual: <strong>${sanitizedFilename}</strong>`;
+                updatePrompt(currentTheme);
+            } else {
+                alert('Por favor, insira um nome de tema válido.');
+            }
+        }
+
+        function updateQuizTitle(theme) {
+            document.getElementById('quiz-title').innerText = `${theme.replace(/_/g, " ")} Quiz`;
+        }
+
+        function updatePrompt(theme) {
+            document.getElementById('gpt-prompt').innerText = `
+Gere 30 questões de múltipla escolha sobre ${theme.replace(/_/g, " ")}. Cada questão deve ter 4 opções de resposta, com uma resposta correta. Forneça a resposta correta como um índice (começando em 0). Categorize cada questão em um tópico específico como 'SQL', 'Delta Lake', 'Machine Learning', etc. Após cada questão, inclua uma breve explicação do porquê a resposta correta está correta. Formate a saída como um objeto JSON assim:
+
+[
+  {
+    "question": "Qual é o principal propósito de ${theme.replace(/_/g, " ")}?",
+    "options": ["Opção 1", "Opção 2", "Opção 3", "Opção 4"],
+    "answer": 2,
+    "category": "Categoria Exemplo",
+    "explanation": "Breve explicação aqui."
+  },
+  ...
+]
+            `;
+        }
+
+        function loadQuestion() {
+            if (currentQuestionIndex < totalQuestions) {
+                let currentQuestion = questions[currentQuestionIndex];
+                document.getElementById('question').innerText = currentQuestion.question;
+                let buttons = document.getElementById('buttons');
+                buttons.innerHTML = '';
+                currentQuestion.options.forEach((option, index) => {
+                    let button = document.createElement('button');
+                    button.innerText = option;
+                    button.classList.add('btn-answer');
+                    button.onclick = () => checkAnswer(index);
+                    buttons.appendChild(button);
+                });
+                document.getElementById('feedback').innerText = '';
+                document.getElementById('next-button').style.display = 'none';
+            } else {
+                showSummary();
+            }
+        }
+
+        function checkAnswer(selectedIndex) {
+            let currentQuestion = questions[currentQuestionIndex];
+            totalAnswered++;
+            if (selectedIndex === currentQuestion.answer) {
+                document.getElementById('feedback').innerHTML = 'Correto!<br>' + currentQuestion.explanation;
+                document.getElementById('feedback').classList.add('correct');
+                correctAnswers++;
+                updateCategoryStats(currentQuestion.category, true);
+            } else {
+                document.getElementById('feedback').innerHTML = 'Incorreto! A resposta correta está destacada.<br>' + currentQuestion.explanation;
+                document.getElementById('feedback').classList.add('incorrect');
+                updateCategoryStats(currentQuestion.category, false);
+            }
+            highlightCorrectAnswer(currentQuestion.answer);
+            document.getElementById('next-button').style.display = 'block';
+            updateProgress();
+            renderCategoryStats();
+        }
+
+        function highlightCorrectAnswer(correctIndex) {
+            let buttons = document.getElementById('buttons').children;
+            for (let i = 0; i < buttons.length; i++) {
+                if (i === correctIndex) {
+                    buttons[i].classList.add('btn-correct');
+                } else {
+                    buttons[i].classList.add('btn-incorrect');
+                }
+                buttons[i].disabled = true;
+            }
+        }
+
+        function nextQuestion() {
+            currentQuestionIndex++;
+            if (currentQuestionIndex < totalQuestions) {
+                loadQuestion();
+            } else {
+                showSummary();
+            }
+        }
+
+        function updateProgress() {
+            let progress = (totalAnswered / totalQuestions) * 100;
+            document.getElementById('progress-fill').style.width = progress + '%';
+        }
+
+        function showSummary() {
+            renderCategoryStats();
+        }
+
+        function updateCategoryStats(category, isCorrect) {
+            if (!categories[category]) {
+                categories[category] = { correct: 0, total: 0 };
+            }
+            categories[category].total++;
+            if (isCorrect) {
+                categories[category].correct++;
+            }
+        }
+
+        function renderCategoryStats() {
+            let statsHTML = '';
+            let totalCorrect = 0;
+            let totalQuestionsCount = 0;
+
+            for (let category in categories) {
+                let correct = categories[category].correct;
+                let total = categories[category].total;
+                let percentage = ((correct / total) * 100).toFixed(2);
+                statsHTML += `<p><strong>${category}:</strong> ${correct}/${total} corretas (${percentage}%)</p>`;
+                totalCorrect += correct;
+                totalQuestionsCount += total;
+            }
+
+            let overallPercentage = ((totalCorrect / totalQuestionsCount) * 100).toFixed(2);
+            statsHTML += `<p><strong>Pontuação Total:</strong> ${totalCorrect}/${totalQuestionsCount} corretas (${overallPercentage}%)</p>`;
+
+            document.getElementById('stats-by-category').innerHTML = statsHTML;
+        }
+
+        function uploadQuestions() {
+            let file = document.getElementById('file-upload').files[0];
+            if (file) {
+                let reader = new FileReader();
+                reader.onload = function(e) {
+                    let newQuestions = JSON.parse(e.target.result);
+                    sanitizeQuestions(newQuestions);  // Sanitizar antes de adicionar
+                    questions = shuffleQuestions(questions); // Embaralhar após adicionar
+                    totalQuestions = questions.length;
+                    document.getElementById('total-questions-count').innerText = totalQuestions;
+                    alert('Novas questões carregadas com sucesso!');
+                };
+                reader.readAsText(file);
+            }
+        }
+
+        function addQuestions() {
+            let content = document.getElementById('json-content').value.trim();
+
+            if (content.startsWith('```json')) {
+                content = content.replace(/```json|```/g, '').trim();
+            }
+
+            try {
+                let newQuestions = JSON.parse(content);
+                sanitizeQuestions(newQuestions);  // Sanitizar antes de adicionar
+                questions = shuffleQuestions(questions); // Embaralhar após adicionar
+                totalQuestions = questions.length;
+                document.getElementById('total-questions-count').innerText = totalQuestions;
+                alert('Novas questões adicionadas com sucesso!');
+            } catch (error) {
+                alert('Formato JSON inválido. Por favor, verifique o conteúdo.');
+            }
+        }
+
+        // Função para baixar o arquivo JSON atualizado
+        function downloadUpdatedFile() {
+            const dataStr = JSON.stringify(questions, null, 2);  // Converte as questões em uma string JSON formatada
+            const blob = new Blob([dataStr], { type: 'application/json' });
+            const url = window.URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = sanitizeFilename(`questions_${currentTheme}`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        async function populateThemes() {
+            const themes = ['Databricks_Certified_Data_Analyst_Associate_Exam', 'Google'];
+            const themeSelect = document.getElementById('theme-select');
+            themeSelect.innerHTML = '';
+
+            for (const theme of themes) {
+                const sanitizedFilename = sanitizeFilename(`questions_${theme}`);
+                try {
+                    const response = await fetch(sanitizedFilename);
+                    if (response.ok) {
+                        themeSelect.innerHTML += `<option value="${theme}">${theme.replace(/_/g, " ")}</option>`;
+                    }
+                } catch (error) {
+                    console.error(`Arquivo não encontrado: ${sanitizedFilename}`);
+                }
+            }
+        }
+
+        function copyPrompt() {
+            const promptText = document.getElementById('gpt-prompt').innerText;
+            navigator.clipboard.writeText(promptText).then(() => {
+                alert('Prompt copiado para a área de transferência!');
+            }).catch(err => {
+                alert('Falha ao copiar o prompt. Tente novamente.');
+            });
+        }
+
+        window.onload = function() {
+            loadQuestionsFromFile(currentTheme);
+            updatePrompt(currentTheme);
+            updateQuizTitle(currentTheme);
+            generateStudyCalendar();  // Gera o calendário ao carregar a página
+        };
+    </script>
+
+
+    <script>
+        if ('serviceWorker' in navigator) {
+          window.addEventListener('load', function() {
+            navigator.serviceWorker.register('/sw.js').then(function(registration) {
+              console.log('Service Worker registrado com sucesso:', registration);
+            }, function(err) {
+              console.log('Falha ao registrar o Service Worker:', err);
+            });
+          });
+        }
+      </script>
+</body>
+</html>
