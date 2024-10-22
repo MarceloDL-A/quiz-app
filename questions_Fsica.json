@@ -1,0 +1,62 @@
+[
+  {
+    "question": "What is the speed of light in a vacuum?",
+    "options": [
+      "300,000 m/s",
+      "300,000 km/s",
+      "150,000 km/s",
+      "3,000 km/s"
+    ],
+    "answer": 1,
+    "category": "Relativity",
+    "explanation": "The speed of light in a vacuum is approximately 300,000 kilometers per second (km/s)."
+  },
+  {
+    "question": "Which particle is responsible for mediating the electromagnetic force?",
+    "options": [
+      "Proton",
+      "Neutron",
+      "Photon",
+      "Electron"
+    ],
+    "answer": 2,
+    "category": "Quantum Mechanics",
+    "explanation": "The photon is the elementary particle that mediates the electromagnetic force in quantum electrodynamics."
+  },
+  {
+    "question": "What is the unit of electric current in the International System (SI)?",
+    "options": [
+      "Volt",
+      "Coulomb",
+      "Ampere",
+      "Ohm"
+    ],
+    "answer": 2,
+    "category": "Electromagnetism",
+    "explanation": "The ampere (A) is the SI unit of electric current, measuring the flow of electric charge."
+  },
+  {
+    "question": "What is Newton's First Law of Motion?",
+    "options": [
+      "An object will remain at rest or in uniform motion unless acted upon by an external force.",
+      "The force on an object is equal to its mass times acceleration.",
+      "For every action, there is an equal and opposite reaction.",
+      "Energy cannot be created or destroyed, only transformed."
+    ],
+    "answer": 0,
+    "category": "Classical Mechanics",
+    "explanation": "Newton's First Law, also known as the law of inertia, states that an object will remain at rest or move uniformly unless acted upon by an external force."
+  },
+  {
+    "question": "What happens to the pressure of a gas if its volume decreases while temperature remains constant (Boyle's Law)?",
+    "options": [
+      "The pressure increases",
+      "The pressure decreases",
+      "The pressure remains constant",
+      "The temperature decreases"
+    ],
+    "answer": 0,
+    "category": "Thermodynamics",
+    "explanation": "Boyle's Law states that for a fixed amount of gas at constant temperature, the pressure is inversely proportional to its volume."
+  }
+]

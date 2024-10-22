@@ -1,0 +1,38 @@
+[
+  {
+    "question": "Em que ano o Brasil proclamou sua independência de Portugal?",
+    "options": [
+      "1804",
+      "1822",
+      "1830",
+      "1848"
+    ],
+    "answer": 1,
+    "category": "Independência",
+    "explanation": "O Brasil proclamou sua independência de Portugal em 1822, quando Dom Pedro I declarou o famoso 'Grito do Ipiranga', separando o Brasil do domínio português."
+  },
+  {
+    "question": "Quem foi o líder da revolução cubana em 1959?",
+    "options": [
+      "Simón Bolívar",
+      "Che Guevara",
+      "Fidel Castro",
+      "Juan Domingo Perón"
+    ],
+    "answer": 2,
+    "category": "Revoluções",
+    "explanation": "Fidel Castro liderou a Revolução Cubana em 1959, depôs o governo de Fulgencio Batista e estabeleceu um governo socialista em Cuba."
+  },
+  {
+    "question": "Qual foi o país sul-americano que primeiro declarou sua independência da Espanha?",
+    "options": [
+      "Peru",
+      "Brasil",
+      "Venezuela",
+      "Argentina"
+    ],
+    "answer": 3,
+    "category": "Independência",
+    "explanation": "A Argentina foi o primeiro país da América do Sul a declarar independência da Espanha, em 1816, após anos de conflito e resistência contra o domínio colonial."
+  }
+]

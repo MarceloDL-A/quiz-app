@@ -5,21 +5,90 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Quiz com Temas Disponíveis em JSON</title>
     <style>
-        body { font-family: Arial, sans-serif; margin: 20px; }
-        #quiz-container { max-width: 700px; margin: auto; padding: 20px; background-color: #f9f9f9; border-radius: 8px; box-shadow: 0px 0px 15px rgba(0,0,0,0.1); }
-        h1 { text-align: center; font-size: 1.8em; color: #007bff; }
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f0f0f5; /* Alteração na cor de fundo para um cinza claro */
+        }
+        #quiz-container {
+            max-width: 800px;
+            margin: auto;
+            padding: 20px;
+            background-color: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.2);
+        }        
+        h1 {
+            text-align: center;
+            font-size: 2em; /* Título maior para mais impacto */
+            color: #007bff;
+        }        
         #question { font-size: 1.2em; margin-bottom: 20px; text-align: left; }
-        button { display: block; margin: 10px 0; padding: 10px 15px; font-size: 1em; border: none; border-radius: 5px; cursor: pointer; width: 100%; transition: background-color 0.3s; text-align: left; }
-        .btn-answer { background-color: #f0f0f0; color: #333; }
-        .btn-answer:hover { background-color: #e0e0e0; }
+        button {
+            display: block;
+            margin: 10px 0;
+            padding: 12px 20px; /* Botões maiores para melhor interação */
+            font-size: 1.1em; /* Tamanho da fonte aumentado */
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 100%;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #e0e0e0;
+        }
+        #topic-checkboxes div {
+            margin-bottom: 10px; /* Mais espaço entre os tópicos */
+        }
+        
+        #question {
+            font-size: 1.3em;
+            margin-bottom: 20px;
+            text-align: left;
+        }        
+        button {
+            text-align: left; /* Alinha o texto dos botões à esquerda */
+        }
+        
+        .btn-answer {
+            background-color: #f0f0f0;
+            color: #333;
+            padding-left: 15px; /* Adiciona espaçamento interno à esquerda para melhor visibilidade */
+        }
+        
+        .btn-answer:hover {
+            background-color: #e0e0e0;
+        }
+        
         .btn-correct { background-color: #28a745 !important; color: white; }
         .btn-incorrect { background-color: #dc3545 !important; color: white; }
         #next-button { background-color: #007bff; color: white; margin-top: 20px; padding: 12px; width: 100%; border-radius: 5px; cursor: pointer; display: none; }
         #feedback { margin-top: 20px; font-size: 1.1em; font-weight: bold; }
         #feedback.correct { color: #28a745; }
         #feedback.incorrect { color: #dc3545; }
-        .progress-bar { height: 20px; width: 100%; background-color: #e9ecef; border-radius: 5px; overflow: hidden; margin: 20px 0; }
-        .progress-fill { height: 100%; background-color: #007bff; width: 0; transition: width 0.5s; }
+        .progress-bar {
+            height: 30px; /* Aumenta a altura da barra de progresso */
+            width: 100%;
+            background-color: #e9ecef;
+            border-radius: 5px;
+            overflow: hidden;
+            margin: 20px 0;
+            position: relative; /* Adiciona para posicionar o texto dentro da barra */
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background-color: #007bff;
+            width: 0;
+            transition: width 0.5s;
+            display: flex;
+            align-items: center; /* Centraliza verticalmente o texto */
+            justify-content: center; /* Centraliza horizontalmente o texto */
+            color: white;
+            font-weight: bold;
+        }
+        
         #score-summary { margin-top: 30px; font-size: 1.1em; }
         .stats-summary { padding: 10px 0; }
         #upload-section { margin-top: 30px; background-color: #f8f9fa; padding: 15px; border-radius: 8px; }
@@ -32,7 +101,7 @@
         #apply-button { background-color: #28a745; color: white; }
         #apply-button:hover { background-color: #218838; }
         #json-upload-section { display: block; margin-top: 20px; }
-        
+
         /* Estilos para o calendário */
         #study-calendar { margin-top: 50px; }
         .calendar-day { display: inline-block; width: 20px; height: 20px; margin: 2px; background-color: #e0e0e0; border-radius: 3px; }
@@ -40,24 +109,95 @@
         .calendar-day[data-studies="2"] { background-color: #8cc665; }
         .calendar-day[data-studies="3"] { background-color: #44a340; }
         .calendar-day[data-studies="4"] { background-color: #1e6823; }
+
+        /* Tooltip para exibir estatísticas diárias */
+    /* Tooltip para exibir estatísticas diárias */
+    .tooltip {
+        position: absolute;
+        background-color: rgba(0, 0, 0, 0.8); /* Fundo com transparência */
+        color: white;
+        padding: 5px;
+        border-radius: 5px;
+        font-size: 0.8em;
+        opacity: 0;  /* Inicialmente invisível */
+        transition: opacity 0.5s ease-in-out;  /* Transição de opacidade para o efeito de fade */
+        pointer-events: none; /* Evita interação com o mouse */
+        z-index: 1000;  /* Coloca a tooltip acima de outros elementos */
+    }
+    
+    .tooltip.show {
+        opacity: 1;  /* Torna visível a tooltip */
+    }
+    
+    /* Ajustes no posicionamento do calendário */
+    .calendar-day {
+        position: relative; /* Para facilitar o posicionamento da tooltip */
+    }
     </style>
 </head>
 <body>
     <div id="quiz-container">
-        <h1 id="quiz-title">Quiz com Temas JSON</h1>
+        <h1 id="quiz-title">Databricks Certified Data Analyst Associate Exam Quiz</h1>
+
+        <!-- Seletor de Número de Questões -->
+        <div style="width: 100%; display: flex; flex-direction: column; align-items: center; margin-bottom: 20px;">
+            <label for="question-slider" style="font-weight: bold;">Número de questões:</label>
+            <input type="range" id="question-slider" min="5" max="100" value="45" oninput="updateQuestionCount(this.value)" style="width: 80%;">
+            <span id="question-count" style="font-weight: bold; color: #007bff;">45</span>
+        </div>
+
+        <!-- Seção onde os tópicos serão mostrados -->
+        <div style="width: 100%; display: flex; flex-direction: column; align-items: center; margin-bottom: 20px;">
+            <label style="font-weight: bold;">Filtrar por Tópico:</label>
+            <div id="topic-checkboxes" style="display: flex; flex-wrap: wrap; justify-content: center; gap: 15px;">
+                <!-- Checkboxes com contagem de questões serão inseridos dinamicamente -->
+            </div>
+            <div style="margin-top: 15px;">
+                <button onclick="selectAllTopics()">Selecionar Todos</button>
+                <button onclick="deselectAllTopics()">Desmarcar Todos</button>
+            </div>
+        </div>
+
+
+        <!-- Cronômetro Ajustado -->
+        <div style="width: 100%; display: flex; flex-direction: column; align-items: center; margin-bottom: 20px;">
+            <h3 style="font-weight: bold;">Cronômetro:</h3>
+            <div style="display: flex; justify-content: space-around; width: 100%;">
+                <label><input type="radio" id="no-timer" name="timer" onclick="disableTimer()" checked> Desligado</label>
+                <label><input type="radio" id="per-question" name="timer" onclick="setPerQuestionTimer()"> Tempo por questão</label>
+                <label><input type="radio" id="total-timer" name="timer" onclick="setTotalTimer()" checked> Tempo total de prova</label>
+            </div>
+        </div>
+
+        <!-- Botão para iniciar o cronômetro -->
+        <div style="display: flex; justify-content: center; width: 100%; margin-top: 10px;">
+            <button onclick="startQuizTimer()">Iniciar Cronômetro</button>
+        </div>
+
+        <!-- Exibição do Tempo Restante -->
+        <div id="timer-container" style="width: 100%; display: flex; justify-content: center; margin-top: 10px;">
+            <span style="font-weight: bold;">Tempo Restante: <span id="timer">00:00</span></span>
+        </div>
+
         <div id="question"></div>
         <div id="buttons"></div>
         <div id="feedback"></div>
         <div class="progress-bar">
             <div class="progress-fill" id="progress-fill"></div>
         </div>
+        
         <button id="next-button" onclick="nextQuestion()">Próxima Questão</button>
         
         <div id="score-summary">
             <h2 class="quiz-summary-title">Resumo do Quiz</h2>
-            <div id="stats-by-category"></div>
-            <div id="summary"></div>
+            <div id="stats-by-category">
+                <p><strong>SQL:</strong> 3/5 corretas (60%)</p>
+                <p><strong>Machine Learning:</strong> 4/4 corretas (100%)</p>
+                <p><strong>Delta Lake:</strong> 2/3 corretas (66.67%)</p>
+                <p><strong>Pontuação Total:</strong> 9/12 corretas (75%)</p>
+            </div>
         </div>
+        
 
         <p id="total-questions-display">Número total de questões: <strong id="total-questions-count">0</strong></p>
 
@@ -82,341 +222,740 @@
             <div class="formatted-code" id="gpt-prompt"></div>
             <button id="copy-prompt" onclick="copyPrompt()">Copiar Prompt GPT</button>
 
-            <input type="file" id="file-upload" accept=".json" onchange="uploadQuestions()">
+      
         </div>
 
         <!-- Calendário de Estudos -->
         <div id="study-calendar">
+            <div>
+                <button onclick="prevQuarter()">Trimestre Anterior</button>
+                <button onclick="nextQuarter()">Próximo Trimestre</button>
+            </div>
+            
             <h2>Seu Calendário de Estudos</h2>
             <div id="calendar-grid"></div>
+            <div class="tooltip" id="tooltip"></div> <!-- Tooltip para estatísticas diárias -->
         </div>
+        <button onclick="saveCalendarProgress()">Salvar Progresso de Estudo</button>
 
     </div>
 
-    <script>
-        let questions = [];  // Array para armazenar as questões.
-        let currentQuestionIndex = 0;
-        let correctAnswers = 0;
-        let totalQuestions = 0;
-        let categories = {};
-        let totalAnswered = 0;
-        let currentTheme = 'Databricks_Certified_Data_Analyst_Associate_Exam';
-        let studyData = {};  // Armazenar dados de estudo por dia
-
-        // Função para embaralhar questões usando o algoritmo de Fisher-Yates
-        function shuffleQuestions(array) {
-            for (let i = array.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [array[i], array[j]] = [array[j], array[i]];
+    
+ <script>
+    let questions = [];  // Array para armazenar as questões.
+    let originalQuestions = [];  // Armazena todas as perguntas carregadas inicialmente.
+    let currentQuestionIndex = 0;
+    let correctAnswers = 0;
+    let totalQuestions = 0;
+    let categories = {};
+    let totalAnswered = 0;
+    let currentTheme = 'Databricks_Certified_Data_Analyst_Associate_Exam';
+    let studyData = {};  // Armazenar dados de estudo por dia
+    
+    // Temporizador
+    let timerInterval;
+    let questionLimit = 45;
+    let timerMode = 'total';
+    let timePerQuestion = 120;
+    let totalTime = 90 * 60;
+    let timeLeft = 0;
+    
+    // --------------- Funções de Questões e Filtros ---------------
+    
+// Função para carregar ou criar o arquivo do tema
+function loadQuestionsFromFile(theme) {
+    const sanitizedFilename = sanitizeFilename(`questions_${theme}`);
+    fetch(sanitizedFilename)
+        .then(response => {
+            if (!response.ok) {
+                // Se o arquivo não existir, define as questões como uma lista vazia e cria um novo tema
+                questions = [];
+                originalQuestions = [];
+                alert(`Novo tema "${theme}" criado. Nenhuma questão disponível ainda.`);
+            } else {
+                return response.json();  // Carrega o JSON do tema existente
             }
-            return array;
+        })
+        .then(data => {
+            if (data) {
+                originalQuestions = [...data];  // Armazena as questões originais
+                questions = shuffleQuestions([...data]);  // Embaralha as questões carregadas
+                totalQuestions = questions.length;
+
+                updateQuizUI();  // Atualiza a interface do quiz com o novo tema
+                
+                // Atualiza os tópicos disponíveis após carregar as questões
+                updateAvailableTopics();  
+            }
+        })
+        .catch(error => {
+            console.error("Erro ao carregar questões:", error);
+        });
+}
+
+
+
+    
+    // Atualiza a interface do quiz com as perguntas e informações
+    function updateQuizUI() {
+        document.getElementById('total-questions-count').innerText = totalQuestions;  // Atualiza o número total de questões
+        document.getElementById('question-slider').max = totalQuestions;  // Atualiza o máximo no controle deslizante
+        document.getElementById('question-slider').value = Math.min(questionLimit, totalQuestions);  // Atualiza o valor atual do controle deslizante
+    
+        currentQuestionIndex = 0;
+        correctAnswers = 0;
+        categories = {};
+        totalAnswered = 0;
+        
+        updateProgress();  // Atualiza (ou zera) a barra de progresso
+        document.getElementById('feedback').innerText = '';  // Reseta o feedback de respostas
+        document.getElementById('next-button').style.display = 'none';  // Esconde o botão de próxima questão
+        document.getElementById('stats-by-category').innerHTML = '';  // Zera o resumo das estatísticas
+        if (questions.length > 0) {
+            loadQuestion();  // Carrega a primeira questão se houver questões disponíveis
+        } else {
+            document.getElementById('question').innerText = "Nenhuma questão disponível para o tema selecionado.";  // Mensagem de aviso
+        }
+        logStudy();  // Atualiza o calendário de estudos
+    }
+    
+    
+    // Embaralha um array (algoritmo de Fisher-Yates)
+    function shuffleQuestions(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]];
+        }
+        return array;
+    }
+    
+    // Função para carregar e exibir uma pergunta
+    function loadQuestion() {
+        if (currentQuestionIndex < questions.length) {
+            const currentQuestion = questions[currentQuestionIndex];
+            document.getElementById('question').innerText = currentQuestion.question;
+            displayOptions(currentQuestion.options);
+            resetFeedback();
+        } else {
+            showSummary();
+        }
+    }
+    
+    // Exibe as opções de uma pergunta
+    function displayOptions(options) {
+        const buttons = document.getElementById('buttons');
+        buttons.innerHTML = '';
+        options.forEach((option, index) => {
+            const button = document.createElement('button');
+            button.innerText = option;
+            button.classList.add('btn-answer');
+            button.onclick = () => checkAnswer(index);
+            buttons.appendChild(button);
+        });
+    }
+    
+    function checkAnswer(selectedIndex) {
+        let currentQuestion = questions[currentQuestionIndex];
+        totalAnswered++;
+        
+        if (selectedIndex === currentQuestion.answer) {
+            document.getElementById('feedback').innerHTML = 'Correto!<br>' + currentQuestion.explanation;
+            document.getElementById('feedback').classList.add('correct');
+            correctAnswers++;
+            updateCategoryStats(currentQuestion.category, true);
+        } else {
+            document.getElementById('feedback').innerHTML = 'Incorreto! A resposta correta está destacada.<br>' + currentQuestion.explanation;
+            document.getElementById('feedback').classList.add('incorrect');
+            updateCategoryStats(currentQuestion.category, false);
+        }
+        
+        highlightCorrectAnswer(currentQuestion.answer);
+        document.getElementById('next-button').style.display = 'block';
+        updateProgress();
+        
+        // Chame a função de renderização das estatísticas aqui
+        renderCategoryStats();  // Certifique-se de que as estatísticas sejam atualizadas após cada resposta.
+    }
+    
+    
+    
+    
+    // Exibe feedback após responder
+    function displayFeedback(isCorrect, explanation) {
+        const feedback = document.getElementById('feedback');
+        feedback.innerHTML = isCorrect ? `Correto!<br>${explanation}` : `Incorreto!<br>${explanation}`;
+        feedback.classList.toggle('correct', isCorrect);
+        feedback.classList.toggle('incorrect', !isCorrect);
+    }
+    
+    // Exibe a resposta correta após selecionar uma opção
+    function highlightCorrectAnswer(correctIndex) {
+        const buttons = document.getElementById('buttons').children;
+        Array.from(buttons).forEach((button, index) => {
+            button.classList.add(index === correctIndex ? 'btn-correct' : 'btn-incorrect');
+            button.disabled = true;
+        });
+    }
+    
+    // Atualiza as estatísticas de categorias
+    function updateCategoryStats(category, isCorrect) {
+        if (!categories[category]) {
+            categories[category] = { correct: 0, total: 0 };
+        }
+        categories[category].total++;  // Incrementa o número total de questões para essa categoria
+        if (isCorrect) {
+            categories[category].correct++;  // Incrementa as respostas corretas para essa categoria
+        }
+    }
+    
+    // Mostra o resumo final do quiz
+    function showSummary() {
+        renderCategoryStats();
+    }
+    
+    // Renderiza as estatísticas de categorias
+    function renderCategoryStats() {
+        let statsHTML = '';
+        let totalCorrect = 0;
+        let totalQuestionsCount = 0;
+    
+        for (let category in categories) {
+            let correct = categories[category].correct;
+            let total = categories[category].total;
+            let percentage = ((correct / total) * 100).toFixed(2);
+            statsHTML += `<p><strong>${category}:</strong> ${correct}/${total} corretas (${percentage}%)</p>`;
+            totalCorrect += correct;
+            totalQuestionsCount += total;
+        }
+    
+        let overallPercentage = ((totalCorrect / totalQuestionsCount) * 100).toFixed(2);
+        statsHTML += `<p><strong>Pontuação Total:</strong> ${totalCorrect}/${totalQuestionsCount} corretas (${overallPercentage}%)</p>`;
+    
+        document.getElementById('stats-by-category').innerHTML = statsHTML;
+    }
+    
+    // Atualiza a barra de progresso com base no número de questões configurado
+    function updateProgress() {
+        let progress = (totalAnswered / questionLimit) * 100;  // Considera o número de questões configurado (questionLimit)
+        document.getElementById('progress-fill').style.width = progress + '%';
+    }
+
+    
+    // Atualiza os tópicos disponíveis com a contagem de questões por categoria
+    // Atualiza os tópicos disponíveis com a contagem de questões por categoria
+function updateAvailableTopics() {
+    const topics = [...new Set(questions.map(q => q.category))];
+    const topicContainer = document.getElementById('topic-checkboxes');
+    topicContainer.innerHTML = ''; // Limpa o container
+
+    topics.forEach(topic => {
+        const questionCount = questions.filter(q => q.category === topic).length; // Conta as questões no tópico
+        const checkbox = createCheckbox(topic, questionCount);
+        topicContainer.appendChild(checkbox);
+    });
+}
+
+    
+    // Cria um checkbox para tópicos com a contagem de questões
+    function createCheckbox(topic, count) {
+        const checkbox = document.createElement('input');
+        checkbox.type = 'checkbox';
+        checkbox.id = `topic-${topic}`;
+        checkbox.value = topic;
+        checkbox.checked = true;
+        checkbox.onchange = filterByTopic;
+
+        const label = document.createElement('label');
+        label.htmlFor = `topic-${topic}`;
+        label.textContent = `${topic} (${count})`; // Mostra o nome do tópico e a contagem de questões
+
+        const div = document.createElement('div');
+        div.style.display = 'flex';
+        div.style.alignItems = 'center';
+        div.style.margin = '5px';
+
+        div.appendChild(checkbox);
+        div.appendChild(label);
+        return div;
+    }
+    
+
+    // Filtra questões pelos tópicos selecionados e ajusta o número máximo de questões
+    function filterByTopic() {
+        const selectedTopics = Array.from(document.querySelectorAll('#topic-checkboxes input[type="checkbox"]:checked'))
+            .map(checkbox => checkbox.value);
+
+        if (selectedTopics.length === 0) {
+            questions = shuffleQuestions([...originalQuestions]);  // Volta para todas as questões
+        } else {
+            // Filtra as questões com base nos tópicos selecionados
+            questions = shuffleQuestions(originalQuestions.filter(q => selectedTopics.includes(q.category)));
         }
 
-        // Função para gerar o calendário de estudos ao estilo GitHub
-        function generateStudyCalendar() {
-            const calendarGrid = document.getElementById('calendar-grid');
-            calendarGrid.innerHTML = ''; // Limpa o calendário
-            const today = new Date();
-            const daysInYear = 365;
-            
-            for (let i = 0; i < daysInYear; i++) {
-                const day = new Date(today);
-                day.setDate(today.getDate() - i);
-                const formattedDate = day.toISOString().split('T')[0];
-                const studies = studyData[formattedDate] || 0;
+        // Atualiza o número máximo de questões e ajusta o controle deslizante
+        totalQuestions = questions.length;
+        document.getElementById('total-questions-count').innerText = totalQuestions;
 
-                const dayElement = document.createElement('div');
-                dayElement.classList.add('calendar-day');
-                dayElement.title = `${formattedDate}: ${studies} estudos`;
-                dayElement.dataset.studies = Math.min(studies, 4);  // No máximo 4
+        // Atualiza o controle deslizante com o novo valor máximo
+        const questionSlider = document.getElementById('question-slider');
+        questionSlider.max = totalQuestions;  // Define o novo valor máximo baseado nas questões filtradas
+        questionLimit = Math.min(questionLimit, totalQuestions);  // Ajusta o limite de questões selecionadas
+        questionSlider.value = questionLimit;  // Atualiza o valor do controle deslizante
 
-                calendarGrid.appendChild(dayElement);
-            }
+        loadQuestion();  // Carrega as questões filtradas
+    }
+
+    // Função para atualizar o número de questões com a barra deslizante
+    function updateQuestionCount(value) {
+        document.getElementById('question-count').textContent = value;
+        questionLimit = Math.min(parseInt(value), totalQuestions);  // Limita o valor ao total de questões disponíveis
+        filterByTopic();  // Recarrega as perguntas de acordo com o novo limite
+    }
+    
+
+
+
+    // Função para selecionar todos os tópicos
+    function selectAllTopics() {
+        const checkboxes = document.querySelectorAll('#topic-checkboxes input[type="checkbox"]');
+        checkboxes.forEach(checkbox => checkbox.checked = true);
+        filterByTopic(); // Atualiza a lista de perguntas
+    }
+
+    // Função para desmarcar todos os tópicos
+    function deselectAllTopics() {
+        const checkboxes = document.querySelectorAll('#topic-checkboxes input[type="checkbox"]');
+        checkboxes.forEach(checkbox => checkbox.checked = false);
+        filterByTopic(); // Atualiza a lista de perguntas
+    }
+
+    // Função para atualizar o número de questões com a barra deslizante
+    function updateQuestionCount(value) {
+        document.getElementById('question-count').textContent = value;
+        questionLimit = parseInt(value);  // Define o novo limite de questões
+        filterByTopic();  // Recarrega as perguntas de acordo com o novo limite
+    }
+
+    
+ // --------------- Funções de Temporizador ---------------
+
+function startTimerOnFirstAnswer() {
+    // Inicia o cronômetro na primeira resposta, se o cronômetro não estiver desativado
+    if (totalAnswered === 0 && timerMode !== 'none' && !timerInterval) {
+        startQuizTimer();
+    }
+}
+
+function startQuizTimer() {
+    // Define o tempo total com base no número de questões
+    if (timerMode === 'total') {
+        totalTime = questionLimit * 2 * 60; // 2 minutos por questão
+    }
+    
+    const duration = (timerMode === 'total') ? totalTime : timePerQuestion;
+    startTimer(duration);
+}
+
+function startTimer(duration) {
+    // Certifica-se de que nenhum outro temporizador está rodando
+    clearInterval(timerInterval);
+    
+    timeLeft = duration;  // Define o tempo restante
+    timerInterval = setInterval(() => {
+        timeLeft--;
+        document.getElementById('timer').innerText = formatTime(timeLeft);
+        
+        if (timeLeft <= 0) {
+            clearInterval(timerInterval);
+            handleTimerEnd();  // Lida com o tempo acabando
         }
+    }, 1000);  // Atualiza a cada segundo
+}
 
-        // Função para registrar os estudos no calendário
-        function logStudy() {
-            const today = new Date().toISOString().split('T')[0];
-            if (!studyData[today]) {
-                studyData[today] = 0;
-            }
-            studyData[today]++; // Incrementa o número de estudos do dia
+function formatTime(seconds) {
+    // Formata o tempo no formato mm:ss
+    const minutes = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${minutes}:${secs < 10 ? '0' : ''}${secs}`;
+}
+
+function handleTimerEnd() {
+    // Função executada quando o tempo acaba
+    alert("O tempo acabou!");
+    nextQuestion();  // Avança para a próxima pergunta
+}
+
+// --------------- Controle de Modo de Temporizador ---------------
+function setPerQuestionTimer() {
+    timerMode = 'per-question';  // Define o modo para tempo por questão
+    timePerQuestion = 120;  // 2 minutos por questão
+}
+
+function setTotalTimer() {
+    timerMode = 'total';  // Define o modo para tempo total
+}
+
+function disableTimer() {
+    timerMode = 'none';  // Desativa o cronômetro
+    clearInterval(timerInterval);  // Interrompe o cronômetro se estiver rodando
+}
+
+
+    // --------------- Outras Funções ---------------
+
+    // ---------------Próxima Questão ---------------
+
+    function nextQuestion() {
+        currentQuestionIndex++;
+    
+        if (currentQuestionIndex < questionLimit) {  // Respeita o limite de questões configurado
+            loadQuestion();
+            resetFeedback();
+        } else {
+            showSummary();  // Exibe o resumo ao atingir o limite de perguntas
+        }
+    }
+    
+    
+    
+    
+    // Reinicia o feedback de respostas
+    function resetFeedback() {
+        document.getElementById('feedback').innerText = '';
+        document.getElementById('next-button').style.display = 'none';
+    }
+    
+    // Função para sanitizar nomes de arquivos
+    function sanitizeFilename(filename) {
+        return filename.replace(/[^\w\s]/gi, '').replace(/\s+/g, '_') + '.json';
+    }
+    
+    
+    // Função para registrar os estudos no calendário
+    function logStudy() {
+        const today = new Date().toISOString().split('T')[0];
+        studyData[today] = (studyData[today] || 0) + 1;
+        generateStudyCalendar();
+    }
+    
+    // Função para gerar o calendário de estudos
+    function generateStudyCalendar() {
+        const calendarGrid = document.getElementById('calendar-grid');
+        calendarGrid.innerHTML = '';
+        const today = new Date();
+        const daysInYear = 365;
+    
+        for (let i = 0; i < daysInYear; i++) {
+            const day = new Date(today);
+            day.setDate(today.getDate() - i);
+            const formattedDate = day.toISOString().split('T')[0];
+            const studies = studyData[formattedDate] || 0;
+    
+            const dayElement = document.createElement('div');
+            dayElement.classList.add('calendar-day');
+            dayElement.title = `${formattedDate}: ${studies} estudos`;
+            dayElement.dataset.studies = Math.min(studies, 4);
+            calendarGrid.appendChild(dayElement);
+        }
+    }
+    
+    // Função para salvar o progresso do calendário
+    function saveCalendarProgress() {
+        localStorage.setItem('studyData', JSON.stringify(studyData));
+        alert('Progresso de estudo salvo com sucesso!');
+    }
+    
+    // Função para carregar o progresso salvo no calendário
+    function loadCalendarProgress() {
+        const savedData = localStorage.getItem('studyData');
+        if (savedData) {
+            studyData = JSON.parse(savedData);
             generateStudyCalendar();
         }
-
-        // Sanitização para garantir questões únicas
-        function sanitizeQuestions(newQuestions) {
-            const existingQuestionsSet = new Set(questions.map(q => q.question));
-            newQuestions.forEach(newQ => {
-                if (!existingQuestionsSet.has(newQ.question)) {
-                    questions.push(newQ);
-                    existingQuestionsSet.add(newQ.question); // Adiciona para garantir que não haverá duplicatas
-                }
-            });
+    }
+    
+    // Função para aplicar um novo tema de questões
+    function applyNewTheme() {
+        const newThemeInput = document.getElementById('theme-input').value.trim();
+        if (newThemeInput) {
+            currentTheme = newThemeInput;
+            resetStats();  // Reinicia as estatísticas quando um novo tema é aplicado
+            questions = [];  // Zera as questões antes de carregar o novo tema
+            originalQuestions = [];  // Também zera as questões originais
+            
+            // Zera o número total de questões e atualiza os displays relacionados
+            totalQuestions = 0;
+            questionLimit = 0;
+            document.getElementById('total-questions-count').innerText = totalQuestions;  // Atualiza o número total de questões
+            document.getElementById('question-count').innerText = questionLimit;  // Atualiza o número de questões do controle deslizante
+            document.getElementById('question-slider').value = 0;  // Reseta o controle deslizante
+            document.getElementById('question-slider').max = 0;  // Zera o valor máximo do controle deslizante
+    
+            updateProgress();  // Zera a barra de progresso
+            loadQuestionsFromFile(currentTheme);  // Carrega o arquivo JSON do novo tema, ou cria um novo se não existir
+            updateQuizTitle(currentTheme);  // Atualiza o título do quiz
+            updatePrompt(currentTheme);  // Atualiza o prompt do GPT com o novo tema
+            document.getElementById('filename-suggestion').innerText = `Nome do arquivo atual: questions_${currentTheme}.json`;
+        } else {
+            alert('Por favor, insira um nome de tema válido.');
         }
-
-        function sanitizeFilename(filename) {
-            return filename.replace(/[^\w\s]/gi, '').replace(/\s+/g, '_') + '.json';
+    }
+    
+    
+    
+    
+    // Atualiza o título do quiz
+    function updateQuizTitle(theme) {
+        document.getElementById('quiz-title').innerText = `${theme.replace(/_/g, " ")} Quiz`;
+    }
+    
+    // --------------- Funções de Upload e Download de JSON ---------------
+    
+    // Função para carregar novas questões via arquivo JSON
+    function uploadQuestions() {
+        const file = document.getElementById('file-upload').files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const newQuestions = JSON.parse(e.target.result);
+                sanitizeQuestions(newQuestions);
+                questions = shuffleQuestions(questions);
+                totalQuestions = questions.length;
+                alert('Novas questões carregadas com sucesso!');
+            };
+            reader.readAsText(file);
         }
-
-        function loadQuestionsFromFile(theme) {
-            const sanitizedFilename = sanitizeFilename(`questions_${theme}`);
-            fetch(sanitizedFilename)
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error("Arquivo não encontrado");
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    questions = shuffleQuestions(data);  // Embaralha as questões ao carregá-las
-                    totalQuestions = questions.length;
-                    document.getElementById('total-questions-count').innerText = totalQuestions;
-                    currentQuestionIndex = 0;
-                    correctAnswers = 0;
-                    categories = {};
-                    totalAnswered = 0;
-                    updateProgress();
-                    document.getElementById('feedback').innerText = '';
-                    document.getElementById('next-button').style.display = 'none';
-                    document.getElementById('stats-by-category').innerHTML = '';
-                    loadQuestion();
-                    logStudy();  // Atualiza o calendário de estudos
-                })
-                .catch(error => {
-                    alert(`Erro ao carregar questões para o tema "${theme}".`);
-                    console.error("Erro ao carregar questões:", error);
-                });
+    }
+    
+    // Função para adicionar novas questões manualmente via JSON
+    function addQuestions() {
+        const content = document.getElementById('json-content').value.trim();
+        let newThemeInput = document.getElementById('theme-input').value.trim();
+    
+        // Se o campo de tema estiver vazio, define um tema padrão
+        if (!newThemeInput) {
+            newThemeInput = 'Databricks Certified Data Analyst Associate Exam';
         }
-
-        function applyNewTheme() {
-            const newThemeInput = document.getElementById('theme-input').value.trim();
-            if (newThemeInput) {
-                currentTheme = newThemeInput;
-                updateQuizTitle(currentTheme);
-                loadQuestionsFromFile(currentTheme);
-                const sanitizedFilename = sanitizeFilename(`questions_${currentTheme}`);
-                document.getElementById('filename-suggestion').innerHTML = `Nome do arquivo atual: <strong>${sanitizedFilename}</strong>`;
-                updatePrompt(currentTheme);
-            } else {
-                alert('Por favor, insira um nome de tema válido.');
+    
+        if (!content) {
+            alert('Por favor, insira um conteúdo de questão válido.');
+            return;
+        }
+    
+        try {
+            const newQuestions = JSON.parse(content); // Tenta analisar o conteúdo JSON inserido
+    
+            if (!Array.isArray(newQuestions) || newQuestions.length === 0) {
+                alert('O conteúdo JSON inserido não parece ser uma lista válida de questões.');
+                return;
             }
+    
+            // Mescla as novas questões com as existentes
+            questions = shuffleQuestions([...questions, ...newQuestions]);
+            originalQuestions = [...questions]; // Atualiza o array original também
+    
+            // Atualiza a interface do quiz com as novas questões
+            currentTheme = newThemeInput;
+            totalQuestions = questions.length;
+            updateAvailableTopics(); // Atualiza os tópicos exibidos
+            document.getElementById('total-questions-count').innerText = totalQuestions;
+            document.getElementById('question-slider').max = totalQuestions; // Ajusta o controle deslizante
+    
+            alert(`Novas questões para o tema ${currentTheme} foram adicionadas com sucesso!`);
+        } catch (error) {
+            alert('Ocorreu um erro ao tentar adicionar as questões. Certifique-se de que o conteúdo JSON está correto.');
+            console.error('Erro ao analisar JSON:', error);
         }
+    }
+    
+    
+    
+    // Função para baixar o arquivo JSON atualizado
+    function downloadUpdatedFile() {
+        const dataStr = JSON.stringify(questions, null, 2);
+        const blob = new Blob([dataStr], { type: 'application/json' });
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = sanitizeFilename(`questions_${currentTheme}`);
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    }
 
-        function updateQuizTitle(theme) {
-            document.getElementById('quiz-title').innerText = `${theme.replace(/_/g, " ")} Quiz`;
-        }
+    // --------------- Prompt GPT ---------------
 
-        function updatePrompt(theme) {
-            document.getElementById('gpt-prompt').innerText = `
-Gere 30 questões de múltipla escolha sobre ${theme.replace(/_/g, " ")}. Cada questão deve ter 4 opções de resposta, com uma resposta correta. Forneça a resposta correta como um índice (começando em 0). Categorize cada questão em um tópico específico como 'SQL', 'Delta Lake', 'Machine Learning', etc. Após cada questão, inclua uma breve explicação do porquê a resposta correta está correta. Formate a saída como um objeto JSON assim:
-
-[
-  {
+    function updatePrompt(theme) {
+        document.getElementById('gpt-prompt').innerText = `
+    Gere 30 questões de múltipla escolha sobre ${theme.replace(/_/g, " ")}. Cada questão deve ter 4 opções de resposta, com uma resposta correta. Forneça a resposta correta como um índice (começando em 0). Categorize cada questão em um tópico específico como 'SQL', 'Delta Lake', 'Machine Learning', etc. Após cada questão, inclua uma breve explicação do porquê a resposta correta está correta. Formate a saída como um objeto JSON assim:
+    
+    [
+    {
     "question": "Qual é o principal propósito de ${theme.replace(/_/g, " ")}?",
     "options": ["Opção 1", "Opção 2", "Opção 3", "Opção 4"],
     "answer": 2,
     "category": "Categoria Exemplo",
     "explanation": "Breve explicação aqui."
-  },
-  ...
-]
-            `;
+    },
+    ...
+    ]
+        `;
+    }
+
+
+    function copyPrompt() {
+        const promptText = document.getElementById('gpt-prompt').innerText;
+        navigator.clipboard.writeText(promptText).then(() => {
+            alert('Prompt copiado para a área de transferência!');
+        }).catch(err => {
+            alert('Falha ao copiar o prompt. Tente novamente.');
+        });
+    }
+
+
+// --------------- Funções de Estatísticas ---------------
+
+// Função para atualizar as estatísticas de categorias
+function updateCategoryStats(category, isCorrect) {
+    if (!categories[category]) {
+        categories[category] = { correct: 0, total: 0 };
+    }
+    categories[category].total++;
+    if (isCorrect) {
+        categories[category].correct++;
+    }
+}
+
+// Função para renderizar as estatísticas das categorias
+function renderCategoryStats() {
+    let statsHTML = '';
+    let totalCorrect = 0;
+    let totalQuestionsCount = 0;
+
+    for (let category in categories) {
+        let correct = categories[category].correct;
+        let total = categories[category].total;
+        let percentage = ((correct / total) * 100).toFixed(2);
+        statsHTML += `<p><strong>${category}:</strong> ${correct}/${total} corretas (${percentage}%)</p>`;
+        totalCorrect += correct;
+        totalQuestionsCount += total;
+    }
+
+    let overallPercentage = ((totalCorrect / totalQuestionsCount) * 100).toFixed(2);
+    statsHTML += `<p><strong>Pontuação Total:</strong> ${totalCorrect}/${totalQuestionsCount} corretas (${overallPercentage}%)</p>`;
+
+    document.getElementById('stats-by-category').innerHTML = statsHTML;
+}
+
+// Função para exibir o resumo do quiz
+function showSummary() {
+    renderCategoryStats();  // Exibe as estatísticas finais
+}
+
+    // Função para calcular o progresso atual e atualizar a barra de progresso
+    function updateProgress() {
+        let progress = (totalAnswered / questionLimit) * 100 || 0;  // Calcula o percentual de progresso, garantindo que comece em 0
+        const progressFill = document.getElementById('progress-fill');
+        progressFill.style.width = progress + '%';
+        progressFill.innerText = `Progresso: ${Math.round(progress)}%`;  // Exibe o texto dentro da barra
+    }
+    
+
+// Função para reiniciar as estatísticas e preparar o quiz para um novo tema ou sessão
+function resetStats() {
+    categories = {};
+    correctAnswers = 0;
+    totalAnswered = 0;
+    document.getElementById('stats-by-category').innerHTML = '';
+}
+
+
+
+function updateProgress() {
+    let progress = (totalAnswered / questionLimit) * 100;  // Calcula o percentual de progresso
+    const progressFill = document.getElementById('progress-fill');
+    progressFill.style.width = progress + '%';
+    progressFill.innerText = `Progresso: ${Math.round(progress)}%`;  // Exibe o texto dentro da barra
+}
+
+
+
+    // --------------- Calendário Stat ---------------
+
+    let currentQuarter = getCurrentQuarter();
+
+    // Função para obter o trimestre atual
+    function getCurrentQuarter() {
+        const month = new Date().getMonth() + 1;  // Mês de 1 a 12
+        return Math.ceil(month / 3);  // Divide em trimestres
+    }
+    
+    // Função para gerar o calendário de estudos por trimestre
+    function generateStudyCalendar() {
+        const calendarGrid = document.getElementById('calendar-grid');
+        calendarGrid.innerHTML = ''; // Limpa o calendário
+        const today = new Date();
+        const currentYear = today.getFullYear();
+        const quarterStartMonth = (currentQuarter - 1) * 3;  // Mês inicial do trimestre
+    
+        for (let i = 0; i < 90; i++) {  // 90 dias para três meses
+            const day = new Date(currentYear, quarterStartMonth, i + 1);
+            if (day > today) break;  // Não exibe dias futuros
+            const formattedDate = day.toISOString().split('T')[0];
+            const studies = studyData[formattedDate] || 0;
+    
+            const dayElement = document.createElement('div');
+            dayElement.classList.add('calendar-day');
+            dayElement.dataset.studies = Math.min(studies, 4);  // No máximo 4
+    
+            // Eventos para tooltip
+            dayElement.addEventListener('mouseenter', (event) => showTooltip(event, formattedDate, studies));
+            dayElement.addEventListener('mouseleave', hideTooltip);
+    
+            calendarGrid.appendChild(dayElement);
         }
-
-        function loadQuestion() {
-            if (currentQuestionIndex < totalQuestions) {
-                let currentQuestion = questions[currentQuestionIndex];
-                document.getElementById('question').innerText = currentQuestion.question;
-                let buttons = document.getElementById('buttons');
-                buttons.innerHTML = '';
-                currentQuestion.options.forEach((option, index) => {
-                    let button = document.createElement('button');
-                    button.innerText = option;
-                    button.classList.add('btn-answer');
-                    button.onclick = () => checkAnswer(index);
-                    buttons.appendChild(button);
-                });
-                document.getElementById('feedback').innerText = '';
-                document.getElementById('next-button').style.display = 'none';
-            } else {
-                showSummary();
-            }
-        }
-
-        function checkAnswer(selectedIndex) {
-            let currentQuestion = questions[currentQuestionIndex];
-            totalAnswered++;
-            if (selectedIndex === currentQuestion.answer) {
-                document.getElementById('feedback').innerHTML = 'Correto!<br>' + currentQuestion.explanation;
-                document.getElementById('feedback').classList.add('correct');
-                correctAnswers++;
-                updateCategoryStats(currentQuestion.category, true);
-            } else {
-                document.getElementById('feedback').innerHTML = 'Incorreto! A resposta correta está destacada.<br>' + currentQuestion.explanation;
-                document.getElementById('feedback').classList.add('incorrect');
-                updateCategoryStats(currentQuestion.category, false);
-            }
-            highlightCorrectAnswer(currentQuestion.answer);
-            document.getElementById('next-button').style.display = 'block';
-            updateProgress();
-            renderCategoryStats();
-        }
-
-        function highlightCorrectAnswer(correctIndex) {
-            let buttons = document.getElementById('buttons').children;
-            for (let i = 0; i < buttons.length; i++) {
-                if (i === correctIndex) {
-                    buttons[i].classList.add('btn-correct');
-                } else {
-                    buttons[i].classList.add('btn-incorrect');
-                }
-                buttons[i].disabled = true;
-            }
-        }
-
-        function nextQuestion() {
-            currentQuestionIndex++;
-            if (currentQuestionIndex < totalQuestions) {
-                loadQuestion();
-            } else {
-                showSummary();
-            }
-        }
-
-        function updateProgress() {
-            let progress = (totalAnswered / totalQuestions) * 100;
-            document.getElementById('progress-fill').style.width = progress + '%';
-        }
-
-        function showSummary() {
-            renderCategoryStats();
-        }
-
-        function updateCategoryStats(category, isCorrect) {
-            if (!categories[category]) {
-                categories[category] = { correct: 0, total: 0 };
-            }
-            categories[category].total++;
-            if (isCorrect) {
-                categories[category].correct++;
-            }
-        }
-
-        function renderCategoryStats() {
-            let statsHTML = '';
-            let totalCorrect = 0;
-            let totalQuestionsCount = 0;
-
-            for (let category in categories) {
-                let correct = categories[category].correct;
-                let total = categories[category].total;
-                let percentage = ((correct / total) * 100).toFixed(2);
-                statsHTML += `<p><strong>${category}:</strong> ${correct}/${total} corretas (${percentage}%)</p>`;
-                totalCorrect += correct;
-                totalQuestionsCount += total;
-            }
-
-            let overallPercentage = ((totalCorrect / totalQuestionsCount) * 100).toFixed(2);
-            statsHTML += `<p><strong>Pontuação Total:</strong> ${totalCorrect}/${totalQuestionsCount} corretas (${overallPercentage}%)</p>`;
-
-            document.getElementById('stats-by-category').innerHTML = statsHTML;
-        }
-
-        function uploadQuestions() {
-            let file = document.getElementById('file-upload').files[0];
-            if (file) {
-                let reader = new FileReader();
-                reader.onload = function(e) {
-                    let newQuestions = JSON.parse(e.target.result);
-                    sanitizeQuestions(newQuestions);  // Sanitizar antes de adicionar
-                    questions = shuffleQuestions(questions); // Embaralhar após adicionar
-                    totalQuestions = questions.length;
-                    document.getElementById('total-questions-count').innerText = totalQuestions;
-                    alert('Novas questões carregadas com sucesso!');
-                };
-                reader.readAsText(file);
-            }
-        }
-
-        function addQuestions() {
-            let content = document.getElementById('json-content').value.trim();
-
-            if (content.startsWith('```json')) {
-                content = content.replace(/```json|```/g, '').trim();
-            }
-
-            try {
-                let newQuestions = JSON.parse(content);
-                sanitizeQuestions(newQuestions);  // Sanitizar antes de adicionar
-                questions = shuffleQuestions(questions); // Embaralhar após adicionar
-                totalQuestions = questions.length;
-                document.getElementById('total-questions-count').innerText = totalQuestions;
-                alert('Novas questões adicionadas com sucesso!');
-            } catch (error) {
-                alert('Formato JSON inválido. Por favor, verifique o conteúdo.');
-            }
-        }
-
-        // Função para baixar o arquivo JSON atualizado
-        function downloadUpdatedFile() {
-            const dataStr = JSON.stringify(questions, null, 2);  // Converte as questões em uma string JSON formatada
-            const blob = new Blob([dataStr], { type: 'application/json' });
-            const url = window.URL.createObjectURL(blob);
-            const link = document.createElement('a');
-            link.href = url;
-            link.download = sanitizeFilename(`questions_${currentTheme}`);
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-        }
-
-        async function populateThemes() {
-            const themes = ['Databricks_Certified_Data_Analyst_Associate_Exam', 'Google'];
-            const themeSelect = document.getElementById('theme-select');
-            themeSelect.innerHTML = '';
-
-            for (const theme of themes) {
-                const sanitizedFilename = sanitizeFilename(`questions_${theme}`);
-                try {
-                    const response = await fetch(sanitizedFilename);
-                    if (response.ok) {
-                        themeSelect.innerHTML += `<option value="${theme}">${theme.replace(/_/g, " ")}</option>`;
-                    }
-                } catch (error) {
-                    console.error(`Arquivo não encontrado: ${sanitizedFilename}`);
-                }
-            }
-        }
-
-        function copyPrompt() {
-            const promptText = document.getElementById('gpt-prompt').innerText;
-            navigator.clipboard.writeText(promptText).then(() => {
-                alert('Prompt copiado para a área de transferência!');
-            }).catch(err => {
-                alert('Falha ao copiar o prompt. Tente novamente.');
-            });
-        }
-
-        window.onload = function() {
-            loadQuestionsFromFile(currentTheme);
-            updatePrompt(currentTheme);
-            updateQuizTitle(currentTheme);
-            generateStudyCalendar();  // Gera o calendário ao carregar a página
-        };
-    </script>
+    }
+    
+    // Funções para mudar o trimestre
+    function nextQuarter() {
+        currentQuarter = (currentQuarter % 4) + 1;
+        generateStudyCalendar();
+    }
+    
+    function prevQuarter() {
+        currentQuarter = (currentQuarter === 1) ? 4 : currentQuarter - 1;
+        generateStudyCalendar();
+    }
+    
 
 
-    <script>
-        if ('serviceWorker' in navigator) {
-          window.addEventListener('load', function() {
-            navigator.serviceWorker.register('/sw.js').then(function(registration) {
-              console.log('Service Worker registrado com sucesso:', registration);
-            }, function(err) {
-              console.log('Falha ao registrar o Service Worker:', err);
-            });
-          });
-        }
-      </script>
+
+// Função para exibir a tooltip com as estatísticas do dia
+function showTooltip(event, date, studies) {
+    const tooltip = document.getElementById('tooltip');
+    tooltip.innerHTML = `<strong>Data:</strong> ${date}<br><strong>Estudos:</strong> ${studies} sessões`;
+    tooltip.style.left = `${event.pageX + 10}px`; // Ajusta a posição da tooltip
+    tooltip.style.top = `${event.pageY + 10}px`;
+    tooltip.classList.add('show');  // Exibe a tooltip
+}
+
+// Função para esconder a tooltip
+function hideTooltip() {
+    const tooltip = document.getElementById('tooltip');
+    tooltip.classList.remove('show');  // Esconde a tooltip
+}
+
+    // --------------- Inicialização ---------------
+    
+    // Carregar progresso ao carregar a página
+    window.onload = function () {
+        loadCalendarProgress();  // Carrega o progresso salvo ao iniciar
+        loadQuestionsFromFile(currentTheme);
+        updatePrompt(currentTheme);
+        generateStudyCalendar();  // Gera o calendário ao carregar a página
+    };
+    
+</script>
+
 </body>
 </html>

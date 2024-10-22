@@ -1,0 +1,50 @@
+[
+  {
+    "question": "Which force is responsible for the expansion of the universe?",
+    "options": [
+      "Electromagnetic force",
+      "Gravitational force",
+      "Dark energy",
+      "Nuclear force"
+    ],
+    "answer": 2,
+    "category": "Cosmic Expansion",
+    "explanation": "Dark energy is believed to be the driving force behind the accelerated expansion of the universe."
+  },
+  {
+    "question": "What is the ultimate fate of the universe according to current cosmological models?",
+    "options": [
+      "It will collapse back into a singularity (Big Crunch)",
+      "It will expand forever and reach a state of maximum entropy (Heat Death)",
+      "It will stop expanding and remain in equilibrium",
+      "It will oscillate between expansion and contraction"
+    ],
+    "answer": 1,
+    "category": "Future of the Universe",
+    "explanation": "The most widely accepted model suggests that the universe will continue expanding until it reaches a state of maximum entropy, also known as 'heat death'."
+  },
+  {
+    "question": "What is the primary evidence supporting the existence of dark matter?",
+    "options": [
+      "The cosmic microwave background radiation",
+      "The orbits of stars in galaxies",
+      "The expansion of the universe",
+      "The detection of gravitational waves"
+    ],
+    "answer": 1,
+    "category": "Dark Matter",
+    "explanation": "The motion of stars in galaxies suggests that there is more mass present than can be accounted for by visible matter alone, indicating the presence of dark matter."
+  },
+  {
+    "question": "What is the Cosmic Microwave Background (CMB)?",
+    "options": [
+      "A type of electromagnetic radiation emitted by stars",
+      "The afterglow of the Big Bang",
+      "A form of dark matter",
+      "The radiation from black holes"
+    ],
+    "answer": 1,
+    "category": "Big Bang Theory",
+    "explanation": "The CMB is the residual thermal radiation from the Big Bang, providing key evidence for the early state of the universe."
+  }
+]
