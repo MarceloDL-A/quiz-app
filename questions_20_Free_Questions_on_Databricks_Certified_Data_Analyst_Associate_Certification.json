@@ -1,0 +1,374 @@
+[
+  {
+    "question": "A data analyst has been tasked with optimizing a Databricks SQL query for a large dataset. What should you consider when trying to improve query performance?",
+    "options": [
+      "Increasing the size of the cluster to handle the data",
+      "Partitioning the data into smaller chunks",
+      "Using a higher level of parallelism for the query",
+      "Increasing the timeout for the query"
+    ],
+    "answer": 1,
+    "category": "Databricks SQL",
+    "explanation": "Partitioning the data can significantly improve query performance by allowing the system to read only relevant partitions."
+  },
+  {
+    "question": "Which layer of the Medallion Architecture is responsible for providing a unified view of data from various sources?",
+    "options": [
+      "Bronze layer",
+      "Silver layer",
+      "Gold layer",
+      "None of the above"
+    ],
+    "answer": 2,
+    "category": "Medallion Architecture",
+    "explanation": "The Gold layer provides a unified, refined view of data ready for consumption in analytics and reporting."
+  },
+  {
+    "question": "A senior data analyst for a retail company wants to create a dashboard to track sales performance. He is deciding whether the company should invest in Databricks SQL to aid with the requirement. Which of the following features of Databricks SQL would be most helpful to take the decision?",
+    "options": [
+      "The ability to query data across multiple data sources",
+      "The ability to ingest streaming data in real-time",
+      "The ability to create visualizations using BI tools such as Tableau and Power BI",
+      "The ability to analyze unstructured data such as customer reviews"
+    ],
+    "answer": 2,
+    "category": "Databricks SQL",
+    "explanation": "Databricks SQL's integration with BI tools facilitates creating dashboards to track sales performance."
+  },
+  {
+    "question": "A data analyst has been asked to create a Databricks SQL query that will summarize sales data by product category and month. Which SQL function can you use to accomplish this?",
+    "options": [
+      "AVG",
+      "SUM",
+      "GROUP BY",
+      "ORDER BY"
+    ],
+    "answer": 2,
+    "category": "Databricks SQL",
+    "explanation": "The GROUP BY clause is used to aggregate data across specified columns, allowing summarization by product category and month."
+  },
+  {
+    "question": "What is the purpose of the Medallion Architecture in data processing?",
+    "options": [
+      "To provide a layered approach to data refinement",
+      "To enforce security protocols across data pipelines",
+      "To integrate machine learning models into data flows",
+      "To visualize data using built-in dashboards"
+    ],
+    "answer": 0,
+    "category": "Medallion Architecture",
+    "explanation": "The Medallion Architecture structures data processing into Bronze, Silver, and Gold layers for systematic refinement."
+  },
+  {
+    "question": "What features does Data Explorer in Databricks offer to simplify the management of data, and how do they improve the data management process?",
+    "options": [
+      "Data Explorer provides a visual interface for creating and managing tables, making it easier to navigate and organize data.",
+      "Data Explorer allows users to create and edit SQL queries directly within the interface, reducing the need to switch between different tools.",
+      "Data Explorer offers data profiling and visualization tools that can help users better understand the structure and content of their data.",
+      "All of the above."
+    ],
+    "answer": 3,
+    "category": "Data Management",
+    "explanation": "All listed features are offered by Data Explorer, enhancing data management by simplifying navigation, querying, and understanding data."
+  },
+  {
+    "question": "A data analyst at a healthcare company is tasked with managing a Databricks table containing personally identifiable information (PII) data, including patients’ names and medical histories. The analyst wants to ensure that only authorized personnel can access the table. Which of the following Databricks tools can the analyst use to enforce table ownership and restrict access to the PII data?",
+    "options": [
+      "Delta Lake",
+      "Access Control Lists",
+      "Apache Spark",
+      "Structured Streaming"
+    ],
+    "answer": 1,
+    "category": "Data Security",
+    "explanation": "Access Control Lists (ACLs) allow the analyst to set permissions, ensuring only authorized users can access sensitive data."
+  },
+  {
+    "question": "A healthcare organization has a Lakehouse that stores data on patient appointments. The data analyst needs to find the average duration of appointments for each doctor. Which of the following SQL statements will return the correct results?",
+    "options": [
+      "SELECT doctor_id, AVG(duration) as avg_duration FROM appointments GROUP BY doctor_id;",
+      "SELECT doctor_id, AVG(duration) as avg_duration FROM appointments GROUP BY doctor_id HAVING avg_duration > 0;",
+      "SELECT doctor_id, SUM(duration)/COUNT() as avg_duration FROM appointments GROUP BY doctor_id;",
+      "SELECT doctor_id, duration/COUNT() as avg_duration FROM appointments GROUP BY doctor_id;"
+    ],
+    "answer": 0,
+    "category": "SQL",
+    "explanation": "Using AVG() function and grouping by doctor_id calculates the average duration per doctor."
+  },
+  {
+    "question": "A manufacturing company wants to use data from sensors installed on the machinery to continually monitor the performance of its production line. Which of the following Databricks SQL features would be most beneficial in this situation?",
+    "options": [
+      "Databricks SQL can be used to ingest streaming data in real-time.",
+      "Databricks SQL can be used to design and create visualizations using BI tools.",
+      "Databricks SQL can be used to query data across multiple data sources.",
+      "Databricks SQL can be used to handle unstructured data."
+    ],
+    "answer": 0,
+    "category": "Databricks SQL",
+    "explanation": "The ability to ingest streaming data in real-time is crucial for monitoring live sensor data from machinery."
+  },
+  {
+    "question": "A data analyst of a large online retailer wants to integrate Databricks SQL with Partner Connect to obtain real-time data on customer behavior from a social media platform. Which of the following steps would the data analyst take to achieve the desired outcome?",
+    "options": [
+      "Use Databricks SQL to ingest the data from the social media platform and then connect it to Partner Connect.",
+      "Use Partner Connect to ingest the data from the social media platform and then connect it to Databricks SQL.",
+      "Use an ETL tool to ingest the data from the social media platform and then connect it to both Partner Connect and Databricks SQL.",
+      "Use an API to ingest the data from the social media platform and then connect it to both Partner Connect and Databricks SQL."
+    ],
+    "answer": 1,
+    "category": "Databricks SQL",
+    "explanation": "Partner Connect should be used to ingest data from the social media platform and then connect it to Databricks SQL for analysis."
+  },
+  {
+    "question": "Which of the following statements about the silver layer in the medallion architecture is true?",
+    "options": [
+      "The silver layer is where data is transformed and processed for analytics use",
+      "The silver layer is where raw data is stored in its original format",
+      "The silver layer is optimized for fast querying",
+      "The silver layer is the largest of the three layers"
+    ],
+    "answer": 0,
+    "category": "Medallion Architecture",
+    "explanation": "In the silver layer, data is cleaned and transformed, making it ready for analytics purposes."
+  },
+  {
+    "question": "Which Databricks feature enables tracking and managing machine learning experiments?",
+    "options": [
+      "Delta Lake",
+      "MLflow",
+      "Koalas",
+      "GraphFrames"
+    ],
+    "answer": 1,
+    "category": "Machine Learning",
+    "explanation": "MLflow is an open-source platform for managing the ML lifecycle, including experimentation and deployment."
+  },
+  {
+    "question": "Which of the following is a benefit of using Delta Lake over traditional data lakes?",
+    "options": [
+      "Higher storage costs",
+      "ACID transactions and data versioning",
+      "Limited compatibility with data processing tools",
+      "Inability to handle structured data"
+    ],
+    "answer": 1,
+    "category": "Delta Lake",
+    "explanation": "Delta Lake provides ACID compliance and data versioning, improving data reliability and consistency."
+  },
+  {
+    "question": "A company needs to analyze a large amount of data stored in its Hadoop cluster. Which of the following best describes the benefit of using Databricks SQL with a Hadoop cluster?",
+    "options": [
+      "Databricks SQL provides faster query processing than traditional Hadoop tools.",
+      "Databricks SQL allows users to store and analyze data directly in Hadoop.",
+      "Databricks SQL provides more advanced security features than Hadoop.",
+      "Databricks SQL provides better support for unstructured data than Hadoop."
+    ],
+    "answer": 0,
+    "category": "Databricks SQL",
+    "explanation": "Databricks SQL offers faster query processing due to its optimized engine, which is more efficient than traditional Hadoop tools."
+  },
+  {
+    "question": "Which of the following statements accurately describes the role of Delta Lake in the architecture of Databricks SQL?",
+    "options": [
+      "Delta Lake provides data ingestion capabilities for Databricks SQL.",
+      "Delta Lake is a data storage layer that provides high-performance querying capabilities for Databricks SQL.",
+      "Delta Lake is a transactional storage layer that provides ACID compliance for data processing in Databricks SQL.",
+      "Delta Lake provides integration capabilities for Databricks SQL with other BI tools and platforms."
+    ],
+    "answer": 2,
+    "category": "Delta Lake",
+    "explanation": "Delta Lake ensures data reliability and integrity by providing ACID transactions in data processing."
+  },
+  {
+    "question": "A healthcare company stores patient information in a table in Databricks. The company needs to ensure that only authorized personnel can access the table. Which of the following actions would best address this security concern?",
+    "options": [
+      "Assigning table ownership to a generic company account",
+      "Granting access to the table to all employees",
+      "Implementing role-based access control with specific privileges assigned to individual users",
+      "Storing the patient information in an unsecured Excel file"
+    ],
+    "answer": 2,
+    "category": "Data Security",
+    "explanation": "Role-based access control allows precise permission settings, ensuring only authorized personnel can access sensitive data."
+  },
+  {
+    "question": "A large retail company has a Lakehouse that stores data on purchases made by their stores. The data analyst needs to find the total revenue generated by each store for January. Which of the following SQL statements will return the correct results?",
+    "options": [
+      "SELECT store_id, SUM(total_sales) as revenue FROM purchase WHERE date >= '2023-01-01' AND date <= '2023-01-31' GROUP BY store_id ORDER BY revenue DESC;",
+      "SELECT store_id, SUM(total_sales) as revenue FROM purchase WHERE date BETWEEN '2023-01-01' AND '2023-01-31' GROUP BY store_id ORDER BY revenue DESC LIMIT 5;",
+      "SELECT store_id, SUM(total_sales) as revenue FROM purchase WHERE date >= '2023-01-01' AND date <= '2023-01-31' GROUP BY store_id HAVING revenue > 0 ORDER BY revenue DESC;",
+      "SELECT store_id, SUM(total_sales) as revenue FROM purchase WHERE date >= '2023-01-01' AND date <= '2023-01-31' GROUP BY store_id HAVING revenue > 0 ORDER BY revenue ASC;"
+    ],
+    "answer": 0,
+    "category": "SQL",
+    "explanation": "Option A correctly calculates total revenue per store for January without unnecessary clauses."
+  },
+  {
+    "question": "In Databricks, which language(s) can be used within notebooks for data analysis?",
+    "options": [
+      "Python",
+      "R",
+      "SQL",
+      "All of the above"
+    ],
+    "answer": 3,
+    "category": "Data Analysis",
+    "explanation": "Databricks notebooks support multiple languages including Python, R, and SQL."
+  },
+  {
+    "question": "A data analyst has been given a requirement of creating a Delta Lake table in Databricks that can be efficiently queried using a specific column as the partitioning column. Which data format and partitioning strategy should the data analyst choose?",
+    "options": [
+      "Parquet file format and partition by hash",
+      "Delta file format and partition by range",
+      "ORC file format and partition by list",
+      "CSV file format and partition by round-robin"
+    ],
+    "answer": 0,
+    "category": "Delta Lake",
+    "explanation": "Using Parquet format and partitioning by hash on a specific column allows for efficient querying and data distribution."
+  },
+  {
+    "question": "A data analyst needs to find out the top 5 customers based on the total amount they spent on purchases in the last 30 days from the sales table. Which of the following Databricks SQL statements will yield the correct result?",
+    "options": [
+      "SELECT TOP 5 customer_id, SUM(price) as total_spent FROM sales WHERE date >= DATEADD(day, -30, GETDATE()) GROUP BY customer_id ORDER BY total_spent DESC;",
+      "SELECT customer_id, SUM(price) as total_spent FROM sales WHERE date >= DATEADD(day, -30, GETDATE()) GROUP BY customer_id ORDER BY total_spent DESC LIMIT 5;",
+      "SELECT customer_id, SUM(price) as total_spent FROM sales WHERE date >= DATEADD(day, -30, GETDATE()) GROUP BY customer_id HAVING total_spent > 0 ORDER BY total_spent DESC LIMIT 5;",
+      "SELECT customer_id, SUM(price) as total_spent FROM sales WHERE date BETWEEN DATEADD(day, -30, GETDATE()) AND GETDATE() GROUP BY customer_id ORDER BY total_spent DESC LIMIT 5;"
+    ],
+    "answer": 1,
+    "category": "SQL",
+    "explanation": "Using LIMIT 5 after ORDER BY returns the top 5 customers based on total_spent in the last 30 days."
+  },
+  {
+    "question": "A data analyst has created a Delta Lake table in Databricks and wants to optimize the performance of queries that filter on a specific column. Which Delta Lake feature should the data analyst use to improve query performance?",
+    "options": [
+      "Indexing",
+      "Partitioning",
+      "Caching",
+      "Z-Ordering"
+    ],
+    "answer": 3,
+    "category": "Delta Lake",
+    "explanation": "Z-Ordering organizes data files based on column values, improving the performance of queries that filter on that column."
+  },
+  {
+    "question": "Delta Lake supports schema evolution, which allows for changes to the schema of a table without requiring a full rewrite of the table. Which of the following is not a supported schema evolution operation?",
+    "options": [
+      "Adding a new column",
+      "Removing a column",
+      "Renaming a column",
+      "Changing the data type of a column"
+    ],
+    "answer": 1,
+    "category": "Delta Lake",
+    "explanation": "Removing a column is not supported in schema evolution due to potential data loss and incompatibility."
+  },
+  {
+    "question": "A data analyst is working on a project to analyze a large dataset using Databricks SQL. The dataset is too large to fit in memory, so the analyst needs to use a distributed computing approach. Which Databricks SQL feature will best suit their needs?",
+    "options": [
+      "Dashboards",
+      "Medallion architecture",
+      "Compute",
+      "Streaming data"
+    ],
+    "answer": 2,
+    "category": "Databricks SQL",
+    "explanation": "The Compute feature provides scalable distributed computing resources suitable for large datasets."
+  },
+  {
+    "question": "A data analyst wants to create a view in Databricks that displays only the top 10% of customers based on their total spending. Which SQL query would achieve this goal?",
+    "options": [
+      "SELECT * FROM customers ORDER BY total_spend DESC LIMIT 10%",
+      "SELECT * FROM customers WHERE total_spend > PERCENTILE(total_spend, 90)",
+      "SELECT * FROM customers WHERE total_spend > (SELECT PERCENTILE(total_spend, 90) FROM customers)",
+      "SELECT * FROM customers ORDER BY total_spend DESC OFFSET 10%"
+    ],
+    "answer": 2,
+    "category": "SQL",
+    "explanation": "Option C correctly filters customers whose total_spend exceeds the 90th percentile."
+  },
+  {
+    "question": "A data analyst is working with a Delta Lake table which includes changing the data types of a column. Which SQL statement should the data analyst use to modify the column data type?",
+    "options": [
+      "ALTER TABLE table_name ADD COLUMN column_name datatype",
+      "ALTER TABLE table_name DROP COLUMN column_name",
+      "ALTER TABLE table_name ALTER COLUMN column_name datatype",
+      "ALTER TABLE table_name RENAME COLUMN column_name TO new_column_name"
+    ],
+    "answer": 2,
+    "category": "SQL",
+    "explanation": "The ALTER COLUMN command is used to modify the data type of an existing column in a table."
+  },
+  {
+    "question": "A data analyst needs to calculate the 90th percentile of sales amounts in a large dataset. Which function should they use in Databricks SQL?",
+    "options": [
+      "PERCENTILE()",
+      "APPROX_PERCENTILE()",
+      "MEDIAN()",
+      "MODE()"
+    ],
+    "answer": 1,
+    "category": "SQL",
+    "explanation": "APPROX_PERCENTILE() efficiently computes percentiles on large datasets."
+  },
+  {
+    "question": "What is the primary advantage of using Z-Ordering in Delta Lake?",
+    "options": [
+      "It compresses the data to save storage space",
+      "It optimizes data skipping for faster query performance",
+      "It replicates data for high availability",
+      "It encrypts data for security purposes"
+    ],
+    "answer": 1,
+    "category": "Delta Lake",
+    "explanation": "Z-Ordering improves data skipping by clustering similar data together, enhancing query performance."
+  },
+  {
+    "question": "A data analyst has created a view in Databricks that references multiple tables in different databases. The data analyst wants to ensure that the view is always up to date with the latest data in the underlying tables. Which of the following Databricks feature should the data analyst use to achieve this?",
+    "options": [
+      "Materialized views",
+      "Delta caches",
+      "Databricks Delta streams",
+      "Databricks SQL Analytics"
+    ],
+    "answer": 2,
+    "category": "Data Management",
+    "explanation": "Databricks Delta streams allow continuous updates to data, ensuring views reflect the latest data from underlying tables."
+  },
+  {
+    "question": "A data analyst in a healthcare company has recently started using Databricks SQL. Her team is struggling to optimize query performance on large datasets. What can the data analyst do to improve query performance in Databricks SQL?",
+    "options": [
+      "Use caching to store frequently used data in memory and reduce query execution time",
+      "Use distributed query processing to parallelize query execution across multiple nodes",
+      "Optimize table partitions and indexes to improve query performance",
+      "All of the above"
+    ],
+    "answer": 3,
+    "category": "Databricks SQL",
+    "explanation": "All the listed methods can collectively improve query performance on large datasets."
+  },
+  {
+    "question": "Delta Lake provides many benefits over traditional data lakes. In which of the following scenarios would Delta Lake not be the best choice?",
+    "options": [
+      "When data is mostly unstructured and does not require any schema enforcement",
+      "When data is primarily accessed through batch processing",
+      "When data is stored in a single file and does not require partitioning",
+      "When data requires frequent updates and rollbacks"
+    ],
+    "answer": 1,
+    "category": "Delta Lake",
+    "explanation": "Delta Lake excels in streaming and interactive queries; for pure batch processing, traditional data lakes may suffice."
+  },
+  {
+    "question": "Which feature of Databricks allows data analysts to create and manage continuous data pipelines with ease?",
+    "options": [
+      "Delta Lake",
+      "Databricks SQL",
+      "Delta Live Tables",
+      "MLflow"
+    ],
+    "answer": 2,
+    "category": "Data Engineering",
+    "explanation": "Delta Live Tables simplifies building and managing data pipelines with declarative configurations."
+  }
+]
